@@ -1,0 +1,51 @@
+<!DOCTYPE html><html>
+<head><title>NYC Districts</title>
+<!-- include leaflet js css -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css"/>
+</head>
+<body>
+<h1>NYC Districts and Top10 Michelin Restaurants</h1>
+<!-- include the JavaScript file needed -->
+<script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+<script src = "CL-neighborhoods.js"></script>
+<script src = "CL-restaurantsdata.js"></script>
+<!-- define a place on the html file to place the map and adjust canvas size-->
+<div id="mapid" style="width: 800px; height: 600px; margin: auto"></div>
+<script>
+// Create the map and set the view to be centered around NYC with zoom level 12
+var mymap = L.map('mapid').setView([40.77629197816517, -73.97547061611378],12);
+// Add an appropriate tile layer as a base map 
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(mymap);
+
+// Create and store the data in the layer, add needed functions then add to the map
+var geojsonLayer = L.geoJSON(neighborhoods, {style: styleFunction,
+							onEachFeature: happenHover}).addTo(mymap);
+	// make the polygons color grey
+	function styleFunction() {return {color: "grey"}; }
+	// make the polygons turn into color tomato when hover
+	function newStyle(e){geojsonLayer = e.target; geojsonLayer.setStyle({color:"tomato"});}
+	// change the color back to grey
+	function oldStyle(){geojsonLayer.setStyle({color:"grey"});}
+	// the function to bind popups and add mouse hovering event
+	function happenHover(feature, layer){
+	layer.bindPopup('<h2>' + feature.properties.Name + '</h2>' + '<br>' + 
+	feature.properties.description, {closeButton: true});
+	layer.on('mouseover', function(){layer.openPopup();});
+					layer.on('mouseover', newStyle);
+                    layer.on('mouseout', oldStyle);
+                    layer.on('mouseout', function() {layer.closePopup();});}  
+// Create and store the data in the layer and add to the map with binded popups
+var geojsonLayer_2 = L.geoJSON(restaurants, {onEachFeature: function(feature, layer){layer.bindPopup('<h3>' + feature.properties.Name + '</h3>' + '<br>' + feature.properties.foodType + '<br>' +
+feature.properties.description + '<br>' + '<a href=' + feature.properties.website + '>' + 'Visit Website' + '</a>');}}).addTo(mymap);
+</script>
+</body>
+<p>
+This map is centered around NYC, giving an overview of all the districts in NYC along with the descriptions. It also marked the top 10 Michelin restaurants in NYC.
+This map can be used for tourism where it has descriptions for all the districts in NYC. It can give an overview of each district to tourists so they can get an idea of what they can do in different neighborhoods.
+For instance, if they want to shop for designer clothings, they can go to SOHO. In addition, NYC have a variety of food, as well as many Michelin starred restaurants. The top 10 Michelin in 2021 is marked, along with the
+descriptions and website links, so the tourists can have an idea of what kind of food the restaurants serve then decide which one they want to go and make reservations online. 
+The base map I chose was Open Street Map, because first, this map shows all the street names and have obvious highway names, which would be helpful for tourists to find locations based on the streets. Secondly, majority 
+of the stores, cafe, bus stop, public utilities etc. are labeled out, so tourists can easily find a place based on their needs according to their locations. Last but not least, even though there're detailed street names and the 
+streets are colored, they're useful for the tourists to identify different streets and despite this, there isnt any other colors/icons that are too distractive to get the information the tourists need.
+</p>
+</html>
